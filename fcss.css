@@ -1,0 +1,165 @@
+/*Allgemeines, Schriftart, Hintergrund, Links, Header und Footer und andere kleine Klassen*/
+* {
+  font-family: serif, 'Courier New', Courier, monospace;
+  font-size: 20pt;
+  color: moccasin;
+  -ms-user-select: None;        /*Nutzer können keine Schrift markieren*/
+  -moz-user-select: None;
+  -webkit-user-select: None;
+  user-select: None;
+}
+@font-face { font-family: Dyslexic; src: url("OpenDyslexicAlta-Regular.otf")} /*Custom Font für Legastheniker*/
+body, html {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  background-color:moccasin;
+}
+.fheader {
+  text-align:center; 
+  background-color: tomato; 
+  padding: 1px;
+}
+.ffooter1 {                                      /*Footer für Seiten, deren Inhalte groß genug sind, da dort body über ganze Seite geht*/
+  position:relative;
+  background-color: rgba(38,38,38,1);
+}
+.ffooter {                                      /*Footer für alle anderen Seiten, da dort Seiteninhalt nicht über ganzen Body, muss der Footer fixiert werden*/
+  background-color: rgba(38,38,38,1);
+  position: absolute;
+  bottom: 0;
+  width: 103%;
+  overflow: hidden;
+}
+a {
+  text-decoration: none;
+  color: whitesmoke;
+}
+.navi {
+  text-align: center;
+}
+.drop {
+  color: moccasin;
+}
+.footer {
+  font-size: 15pt;
+}
+label, input, p, h4 {
+  color:rgba(38,38,38,1);
+}
+/*Borders*/
+.border1 {
+  border-style: solid;
+  border-width: 5px;
+  border-color: rgb(60,60,60);
+}
+.border2 {
+  border-style: solid;
+  border-width: 2px;
+  border-color: whitesmoke;
+}
+.border3{
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(60,60,60);
+}
+/*Tabellen*/
+.theader {
+  font-size: 20pt;
+  font-weight: bolder;
+  color: black;
+  background-color:cadetblue;
+  border-left-style: solid;
+  border-color:dodgerblue; 
+  border-width: 8pt;
+}
+.tout {
+  font-size:15pt;
+  color: moccasin;
+  background-color: rgba(38,38,38,1);
+  text-align: left;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(60,60,60);
+}
+.tin {
+  font-size:15pt;
+  color: rgba(38,38,38,1);
+  background-color: tomato;
+  text-align: center;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(60,60,60);
+}
+/*Hover-Animation für alle Elemente mit hover-class*/
+.hover {
+  transition: 0.2s;
+}
+.hover:hover {
+  opacity: 0.5;
+}
+a:hover{
+  color: brown;
+}
+/*Styling für Slider*/
+input[type=range]{
+  -webkit-appearance: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 400px;
+  height: 4px;
+  background-color: moccasin;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  background: rgba(38,38,38,1);
+  margin-top: -5px;
+}
+/*Kleinskalierung der Schrift*/
+@media screen and (max-width: 992px) {
+  .small, p {
+    font-size: 15pt;
+  }
+  h1 {
+    font-size: 20pt;
+  }
+  a {
+    font-size: 15pt;
+  }
+/*Kleiner Header bei schmalem Device*/
+  .fheader {
+    height: 80px;
+  }
+/*Footeranpassung bei kleinem Browser*/
+  .footer {
+    font-size: 10pt;
+    text-align: center;
+    border-top-style: solid;
+    border-color: moccasin;
+    border-width: 2pt;
+  }
+  .ffooter {
+    position: relative;
+  }
+/*Kleiner Browser: Borderstil vom Foodtab ändert sich*/
+  #foodtab {
+    border-bottom-style: solid;
+    border-right-width: 0pt;
+  }
+/*Verstecken unnötiger Elemente bei kleinem Browser*/
+  .hide {
+    display:none;
+  }
+/*Skalierung des Bildes, damit fritzl-Animation nicht div-Container verschiebt*/
+  .imgdiv {
+    height: 85vw;
+  }
+  #img1 {
+    width: 55%;
+    height: 55%;
+  }
+}
