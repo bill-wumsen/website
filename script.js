@@ -4,6 +4,8 @@
 const slides = [
   {
     video: "videos/web1_60_hires.mp4",
+    link: "https://www.instagram.com/p/DKhmm9LoCnl/",
+    linkLabel: "Projekt Der Baron öffnen",
     left: "Regisseur",
     right: "Der Baron",
     topLeft: "Feature Film",
@@ -12,6 +14,8 @@ const slides = [
   },
   {
     video: "videos/web2_hires.mp4",
+    link: "https://www.instagram.com/studis.ilmenau/",
+    linkLabel: "Projekt studis.ilmenau öffnen",
     left: "Content Creator",
     right: "studis.ilmenau",
     topLeft: "Social Media",
@@ -20,14 +24,18 @@ const slides = [
   },
   {
     video: "videos/web3_60_hires.mp4",
+    link: "https://www.youtube.com/watch?v=S74KPJloQdg",
+    linkLabel: "Projekt Medusa öffnen",
     left: "Produktionsleiter",
     right: "Medusa",
     topLeft: "Feature Film",
-    topRight: "Finanzierung · Organisation · Distribution",
+    topRight: "Organisation · Distribution",
     bottomCenter: "ilmpressions Filmproduktion"
   },
   {
     video: "videos/web4_hires.mp4",
+    link: "https://www.insuedthueringen.de/inhalt.medusa-filmpremiere-fuer-ilmenauer-psychothriller.ed4332bd-d247-4c9c-a010-5b1cc81b1771.html",
+    linkLabel: "Projekt Medusa Filmpremiere öffnen",
     left: "Organisator",
     right: "Medusa Filmpremiere",
     topLeft: "Event",
@@ -63,6 +71,11 @@ let video =
 const glowVideo =
   document.getElementById(
     "portfolioVideoGlow"
+  );
+
+const videoLink =
+  document.getElementById(
+    "portfolioVideoLink"
   );
 
 const textLeft =
@@ -137,6 +150,16 @@ const firstExperienceTrigger =
 const reducedMotionQuery =
   window.matchMedia(
     "(prefers-reduced-motion: reduce)"
+  );
+
+const mobileLayoutQuery =
+  window.matchMedia(
+    "(max-width: 700px)"
+  );
+
+const coarsePointerQuery =
+  window.matchMedia(
+    "(hover: none) and (pointer: coarse)"
   );
 
 const pageCurtainRoot =
@@ -245,6 +268,11 @@ const landingWordFitStep = 0.005;
 let landingWordFitFrame = null;
 let landingWordResizeObserver = null;
 let landingWordMeasureElement = null;
+
+/* ========================================= */
+/* SECTION: RESPONSIVE LANDING STATUS        */
+/* ========================================= */
+let responsiveLandingSyncFrame = null;
 
 /* ========================================= */
 /* SECTION: VIDEO LAYER INITIALISIERUNG      */
@@ -1147,8 +1175,35 @@ function resetTextTrack(item) {
   return track;
 }
 
+function updateVideoLink(index) {
+  if (!videoLink) {
+    return;
+  }
+
+  const slide = slides[index];
+
+  if (!slide || !slide.link) {
+    videoLink.removeAttribute("href");
+    videoLink.removeAttribute(
+      "aria-label"
+    );
+
+    return;
+  }
+
+  videoLink.href = slide.link;
+
+  videoLink.setAttribute(
+    "aria-label",
+    slide.linkLabel ||
+      `${slide.left} ${slide.right} öffnen`
+  );
+}
+
 function updateTexts(index) {
   const slide = slides[index];
+
+  updateVideoLink(index);
 
   rollingTextItems.forEach(
     (item) => {
@@ -1246,6 +1301,20 @@ function startRollingTexts(
       track.classList.add(
         "is-animating"
       );
+    }
+  );
+}
+
+if (videoLink) {
+  videoLink.addEventListener(
+    "click",
+    (event) => {
+      if (
+        isLandingTransitioning ||
+        isPageCurtainInteractionBlocked()
+      ) {
+        event.preventDefault();
+      }
     }
   );
 }
@@ -1424,6 +1493,51 @@ function updateLandingWordAreaWidths() {
   const viewportWidth =
     document.documentElement
       .clientWidth;
+
+  /*
+   * SECTION: Auf Smartphones liegen die
+   * großen Wörter innerhalb der nahezu
+   * vollbreiten Videofläche. Die Messung
+   * verwendet deshalb feste Anteile der
+   * realen Stage statt der Außenränder.
+   */
+  if (mobileLayoutQuery.matches) {
+    const mobileStageWidth =
+      Math.max(
+        Math.min(
+          stageRect.width,
+          viewportWidth
+        ),
+        1
+      );
+
+    setLandingWordAreaWidth(
+      textLeft,
+      mobileStageWidth * 0.46
+    );
+
+    setLandingWordAreaWidth(
+      textRight,
+      mobileStageWidth * 0.46
+    );
+
+    setLandingWordAreaWidth(
+      textTopLeft,
+      mobileStageWidth * 0.4
+    );
+
+    setLandingWordAreaWidth(
+      textTopRight,
+      mobileStageWidth * 0.56
+    );
+
+    setLandingWordAreaWidth(
+      textBottomCenter,
+      mobileStageWidth * 0.92
+    );
+
+    return;
+  }
 
   const edgeSafety =
     Math.min(
@@ -2013,6 +2127,19 @@ async function prepareIncomingVideo(
 }
 
 /* ========================================= */
+/* SECTION: RESPONSIVE LANDING MODUS         */
+/* ========================================= */
+function usesNativeLandingScroll() {
+  return Boolean(
+    mobileLayoutQuery.matches ||
+    (
+      window.innerWidth <= 1100 &&
+      coarsePointerQuery.matches
+    )
+  );
+}
+
+/* ========================================= */
 /* SECTION: LANDING GESTENSPERRE             */
 /* ========================================= */
 function normalizeWheelDelta(event) {
@@ -2212,6 +2339,7 @@ function snapLandingScrollTo(
     window.scrollY;
 
   numberMotionUsesVirtualInput =
+    !usesNativeLandingScroll() &&
     isLandingScrollControlled();
 
   root.style.scrollBehavior =
@@ -2224,6 +2352,7 @@ function snapLandingScrollTo(
       window.scrollY;
 
     numberMotionUsesVirtualInput =
+      !usesNativeLandingScroll() &&
       isLandingScrollControlled();
   });
 }
@@ -2330,6 +2459,15 @@ function handleLandingExitWheel(
 function handleLandingWheel(event) {
   if (isPageCurtainInteractionBlocked()) {
     event.preventDefault();
+    return;
+  }
+
+  /*
+   * SECTION: Auf Smartphones und
+   * Touch-Tablets bleibt das native
+   * vertikale Browser-Scrolling aktiv.
+   */
+  if (usesNativeLandingScroll()) {
     return;
   }
 
@@ -2548,9 +2686,12 @@ function cancelLandingTransition(
   isLandingTransitioning = false;
 
   resetLandingScrollAccumulators();
-  snapLandingScrollToSlide(
-    currentSlideIndex
-  );
+
+  if (!usesNativeLandingScroll()) {
+    snapLandingScrollToSlide(
+      currentSlideIndex
+    );
+  }
 
   activateVideoGlow(true);
   releaseScrollGestureIfReady();
@@ -2664,9 +2805,11 @@ function finishLandingTransition(
   isLandingExitUnlocked = false;
   resetLandingScrollAccumulators();
 
-  snapLandingScrollToSlide(
-    currentSlideIndex
-  );
+  if (!usesNativeLandingScroll()) {
+    snapLandingScrollToSlide(
+      currentSlideIndex
+    );
+  }
 
   releaseScrollGestureIfReady();
 
@@ -2766,6 +2909,7 @@ async function requestLandingTransition(
   }
 
   if (
+    usesNativeLandingScroll() ||
     isPageCurtainInteractionBlocked() ||
     isLandingTransitioning ||
     isScrollGestureLocked ||
@@ -2889,6 +3033,7 @@ function updateVideo(
   scrollDirection = 0
 ) {
   if (
+    usesNativeLandingScroll() ||
     index === currentSlideIndex ||
     isLandingTransitioning ||
     isScrollGestureLocked
@@ -3206,8 +3351,11 @@ function updateNumberMotionFromWindowScroll(
     lastNumberWindowScrollY;
 
   const usesVirtualInputNow =
-    isLandingScrollControlled() ||
-    isLandingScrollSnapping;
+    !usesNativeLandingScroll() &&
+    (
+      isLandingScrollControlled() ||
+      isLandingScrollSnapping
+    );
 
   const sourceChanged =
     usesVirtualInputNow !==
@@ -3308,6 +3456,7 @@ function updateLineStartOffsets(
     window.scrollY;
 
   numberMotionUsesVirtualInput =
+    !usesNativeLandingScroll() &&
     isLandingScrollControlled();
 
   applyNumberMotionTransform();
@@ -3322,6 +3471,33 @@ function updateLineStartOffsets(
 /* ========================================= */
 /* SECTION: SCROLL -> SLIDE MAPPING          */
 /* ========================================= */
+function updateLandingLineVisibility(
+  landingRect
+) {
+  if (!landingLines) {
+    return;
+  }
+
+  const firstAccordionViewportEnd =
+    firstExperienceTrigger
+      ? firstExperienceTrigger
+          .getBoundingClientRect()
+          .top
+      : landingRect.bottom;
+
+  const visibleLineHeight =
+    Math.min(
+      Math.max(
+        firstAccordionViewportEnd,
+        0
+      ),
+      window.innerHeight
+    );
+
+  landingLines.style.height =
+    `${visibleLineHeight}px`;
+}
+
 function handleLandingScroll(
   scrollDirection = 0
 ) {
@@ -3344,8 +3520,61 @@ function handleLandingScroll(
     landingTop;
 
   const maxScrollableInsideLanding =
-    landingHeight -
-    window.innerHeight;
+    Math.max(
+      landingHeight -
+        window.innerHeight,
+      1
+    );
+
+  const progress = Math.min(
+    Math.max(
+      scrollInsideLanding /
+        maxScrollableInsideLanding,
+      0
+    ),
+    1
+  );
+
+  const rawIndex =
+    Math.floor(
+      progress *
+      slides.length
+    );
+
+  const nextIndex =
+    Math.min(
+      rawIndex,
+      slides.length - 1
+    );
+
+  /*
+   * SECTION: Auf Smartphones und
+   * Touch-Tablets bestimmt ausschließlich
+   * der reale Scrollfortschritt den aktiven
+   * Videozustand. Es gibt kein Scroll-Lock,
+   * kein preventDefault und kein Zurücksnappen.
+   */
+  if (usesNativeLandingScroll()) {
+    wasBelowLanding =
+      scrollInsideLanding >
+        maxScrollableInsideLanding +
+          1;
+
+    if (
+      nextIndex !== currentSlideIndex ||
+      isLandingTransitioning
+    ) {
+      setLandingStateImmediately(
+        nextIndex
+      );
+    }
+
+    updateLandingLineVisibility(
+      rect
+    );
+
+    return;
+  }
 
   const isBelowLanding =
     scrollInsideLanding >
@@ -3377,27 +3606,6 @@ function handleLandingScroll(
     snapLandingScrollToExit();
   }
 
-  const progress = Math.min(
-    Math.max(
-      scrollInsideLanding /
-      maxScrollableInsideLanding,
-      0
-    ),
-    1
-  );
-
-  const rawIndex =
-    Math.floor(
-      progress *
-      slides.length
-    );
-
-  const nextIndex =
-    Math.min(
-      rawIndex,
-      slides.length - 1
-    );
-
   if (
     rect.bottom <= 0 &&
     (
@@ -3427,26 +3635,9 @@ function handleLandingScroll(
     );
   }
 
-  if (landingLines) {
-    const firstAccordionViewportEnd =
-      firstExperienceTrigger
-        ? firstExperienceTrigger
-            .getBoundingClientRect()
-            .top
-        : rect.bottom;
-
-    const visibleLineHeight =
-      Math.min(
-        Math.max(
-          firstAccordionViewportEnd,
-          0
-        ),
-        window.innerHeight
-      );
-
-    landingLines.style.height =
-      `${visibleLineHeight}px`;
-  }
+  updateLandingLineVisibility(
+    rect
+  );
 }
 
 /* ========================================= */
@@ -3556,9 +3747,83 @@ function setLandingStateImmediately(
   }
 }
 
+/* ========================================= */
+/* SECTION: RESPONSIVE LANDING WECHSEL       */
+/* ========================================= */
+function synchronizeResponsiveLandingMode() {
+  clearScrollGestureIdleTimer();
+
+  isScrollGestureLocked = false;
+  isScrollGestureIdle = true;
+  isLandingExitUnlocked = false;
+  isLandingScrollSnapping = false;
+
+  resetLandingScrollAccumulators();
+
+  if (isLandingTransitioning) {
+    finishLandingTransition(
+      "responsive"
+    );
+  }
+
+  lastLandingScrollY =
+    window.scrollY;
+
+  lastNumberWindowScrollY =
+    window.scrollY;
+
+  numberMotionUsesVirtualInput =
+    !usesNativeLandingScroll() &&
+    isLandingScrollControlled();
+
+  scheduleLandingWordFit();
+  handleLandingScroll();
+}
+
+function scheduleResponsiveLandingSync() {
+  if (
+    responsiveLandingSyncFrame !== null
+  ) {
+    return;
+  }
+
+  responsiveLandingSyncFrame =
+    window.requestAnimationFrame(() => {
+      responsiveLandingSyncFrame = null;
+      synchronizeResponsiveLandingMode();
+    });
+}
+
+function observeResponsiveLandingMode() {
+  const queries = [
+    mobileLayoutQuery,
+    coarsePointerQuery
+  ];
+
+  queries.forEach((query) => {
+    if (
+      typeof query.addEventListener ===
+      "function"
+    ) {
+      query.addEventListener(
+        "change",
+        scheduleResponsiveLandingSync
+      );
+    } else if (
+      typeof query.addListener ===
+      "function"
+    ) {
+      query.addListener(
+        scheduleResponsiveLandingSync
+      );
+    }
+  });
+}
+
 updateLineStartOffsets(true);
 initializeLandingWordFit();
 initializePageCurtain();
+observeResponsiveLandingMode();
 
 /* ========================================= */
 /* SECTION: EVENTS                           */
@@ -3655,6 +3920,7 @@ window.addEventListener(
     }
 
     if (
+      !usesNativeLandingScroll() &&
       isLandingScrollControlled()
     ) {
       snapLandingScrollToSlide(
@@ -3700,6 +3966,7 @@ window.addEventListener(
         window.scrollY;
 
       numberMotionUsesVirtualInput =
+        !usesNativeLandingScroll() &&
         isLandingScrollControlled();
 
       handleLandingScroll();
@@ -3763,6 +4030,7 @@ document.addEventListener(
 
     if (isDocumentVisible) {
       if (
+        !usesNativeLandingScroll() &&
         isLandingScrollControlled()
       ) {
         snapLandingScrollToSlide(
@@ -3774,6 +4042,7 @@ document.addEventListener(
         window.scrollY;
 
       numberMotionUsesVirtualInput =
+        !usesNativeLandingScroll() &&
         isLandingScrollControlled();
 
       activateVideoGlow(true);

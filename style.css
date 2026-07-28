@@ -736,6 +736,25 @@ body::-webkit-scrollbar {
 
   background: #1f1d20;
 }
+/* ========================================= */
+/* SECTION: VIDEO PROJECT LINK               */
+/* ========================================= */
+.portfolio-video-link {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  display: block;
+
+  background: transparent;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.portfolio-video-link.is-disabled {
+  pointer-events: none;
+}
 
 /* ========================================= */
 /* SECTION: VIDEO CURTAIN LAYERS             */
@@ -1094,6 +1113,195 @@ html.js
 }
 
 /* ========================================= */
+/* SECTION: RESPONSIVE LANDING TABLET        */
+/* ========================================= */
+@media (min-width: 701px) and (max-width: 1100px) {
+  :root {
+    --video-width: min(56vw, 640px);
+  }
+
+  .landing {
+    height: 500vh;
+    height: 500svh;
+  }
+
+  .landing-sticky {
+    height: 100vh;
+    height: 100svh;
+
+    padding: 1.5rem 2rem;
+  }
+
+  .landing-topbar {
+    top: 3svh;
+
+    margin-right: 0.75rem;
+    margin-left: 0.75rem;
+
+    column-gap: 0.75rem;
+  }
+
+  .landing-topbar-name {
+    font-size:
+      clamp(1.35rem, 2.8vw, 2rem);
+  }
+
+  .landing-topbar-timecode,
+  .landing-topbar-link {
+    font-size:
+      clamp(0.75rem, 1.5vw, 1rem);
+  }
+
+  .landing-topbar-link--projects {
+    right:
+      clamp(7rem, 15vw, 10rem);
+  }
+
+  .video-stage {
+    width: var(--video-width);
+  }
+
+  .portfolio-video-glow {
+    filter:
+      blur(56px)
+      saturate(1.35);
+
+    transform: scale(1.65);
+  }
+
+  .portfolio-video-glow.is-active {
+    opacity: 0.24;
+  }
+}
+
+/* ========================================= */
+/* SECTION: RESPONSIVE LANDING SMARTPHONE    */
+/* ========================================= */
+@media (max-width: 700px) {
+  :root {
+    --video-width: 100vw;
+    --text-gap-tight: 0.4rem;
+  }
+
+  .landing {
+    height: 500vh;
+    height: 500svh;
+  }
+
+  .landing-sticky {
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
+
+    padding: 0;
+  }
+
+  .landing-frame {
+    width: 100%;
+    height: 100%;
+  }
+
+  .landing-topbar {
+    top: 3svh;
+
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+    column-gap: 0.5rem;
+
+    margin-right: 0.75rem;
+    margin-left: 0.75rem;
+  }
+
+  .landing-topbar-name {
+    grid-column: 1;
+
+    font-size:
+      clamp(1.05rem, 4.6vw, 1.45rem);
+  }
+
+  .landing-topbar-timecode {
+    left: 50%;
+
+    font-size:
+      clamp(0.62rem, 2.6vw, 0.82rem);
+  }
+
+  .landing-topbar-link--projects {
+    display: none;
+  }
+
+  .landing-topbar-link--contact {
+    grid-column: 3;
+
+    font-size:
+      clamp(0.68rem, 2.8vw, 0.9rem);
+  }
+
+  .landing-topbar-name,
+  .landing-topbar-timecode,
+  .landing-topbar-link {
+    min-height: 2.75rem;
+  }
+
+  .video-stage {
+    width: 100vw;
+    max-width: 100%;
+
+    aspect-ratio: var(--video-ratio);
+  }
+
+  .portfolio-video-glow {
+    filter:
+      blur(36px)
+      saturate(1.2);
+
+    transform: scale(1.35);
+  }
+
+  .portfolio-video-glow.is-active {
+    opacity: 0.16;
+  }
+
+  .portfolio-video-link {
+    touch-action: manipulation;
+  }
+
+  .overlay-left {
+    right: auto;
+    left: 0.75rem;
+
+    text-align: left;
+  }
+
+  .overlay-right {
+    right: 0.75rem;
+    left: auto;
+
+    text-align: right;
+  }
+
+  .overlay-top-left {
+    left: 0.75rem;
+  }
+
+  .overlay-top-right {
+    right: 0.75rem;
+  }
+
+  .landing-lines {
+    height: 100vh;
+    height: 100svh;
+  }
+
+  .side-line {
+    width: 2.25rem;
+  }
+}
+
+/* ========================================= */
 /* SECTION: PROJEKTE & ERFAHRUNG             */
 /* ========================================= */
 .experience-section {
@@ -1247,15 +1455,17 @@ html.js
     padding 180ms ease;
 }
 
-.experience-trigger:hover {
-  padding-right: clamp(1.25rem, 2.4vw, 2.15rem);
-  padding-left: clamp(1.25rem, 2.4vw, 2.15rem);
+@media (hover: hover) and (pointer: fine) {
+  .experience-trigger:hover {
+    padding-right: clamp(1.25rem, 2.4vw, 2.15rem);
+    padding-left: clamp(1.25rem, 2.4vw, 2.15rem);
 
-  background: color-mix(
-    in srgb,
-    var(--color-panel) 90%,
-    white 10%
-  );
+    background: color-mix(
+      in srgb,
+      var(--color-panel) 90%,
+      white 10%
+    );
+  }
 }
 
 .experience-trigger:focus-visible {
@@ -1784,13 +1994,6 @@ html.js
     padding: 1.25rem 0;
   }
 
-  .experience-trigger:hover {
-    padding-right: 0;
-    padding-left: 0;
-
-    background: transparent;
-  }
-
   .experience-row-meta {
     grid-area: meta;
 
@@ -1865,6 +2068,149 @@ html.js
 
   .experience-cv-link {
     justify-self: start;
+  }
+}
+
+/* ========================================= */
+/* SECTION: RESPONSIVE EXPERIENCE TABLET     */
+/* ========================================= */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .experience-container {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+
+  .experience-header {
+    display: grid;
+  }
+
+  .experience-eyebrow {
+    margin-bottom: 0;
+    padding-top: 0.7rem;
+  }
+
+  .experience-heading {
+    font-size:
+      clamp(3rem, 6.5vw, 7.5rem);
+    line-height: 0.9;
+  }
+
+  .experience-intro {
+    margin-top: 2rem;
+  }
+
+  .experience-trigger {
+    min-height:
+      var(--experience-row-height);
+
+    grid-template-columns:
+      minmax(7rem, 0.8fr)
+      minmax(0, 2fr)
+      minmax(7rem, 0.75fr)
+      1.75rem;
+    grid-template-areas: none;
+    gap: 1rem;
+
+    padding:
+      1rem
+      clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .experience-row-meta {
+    grid-area: auto;
+
+    display: grid;
+    grid-template-columns:
+      2.5rem
+      minmax(0, 1fr);
+    gap: 0.6rem;
+  }
+
+  .experience-number::after {
+    content: none;
+  }
+
+  .experience-row-identity {
+    grid-area: auto;
+  }
+
+  .experience-project-name {
+    padding-right: 0;
+
+    font-size:
+      clamp(1.4rem, 2.8vw, 2rem);
+  }
+
+  .experience-category {
+    grid-area: auto;
+    justify-self: end;
+
+    text-align: right;
+  }
+
+  .experience-symbol {
+    grid-area: auto;
+    align-self: center;
+  }
+
+  .experience-project-layout {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1.6fr)
+      minmax(190px, 0.9fr);
+    gap: 2rem;
+
+    padding:
+      clamp(2.5rem, 4vw, 3.75rem)
+      clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .experience-project-layout--no-image {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .experience-tools-layout {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .experience-cv {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+/* ========================================= */
+/* SECTION: RESPONSIVE EXPERIENCE SMARTPHONE */
+/* ========================================= */
+@media (max-width: 700px) {
+  .experience-container {
+    padding:
+      4.8rem
+      1.25rem
+      5rem;
+  }
+
+  .experience-trigger {
+    background:
+      var(--color-panel);
+  }
+
+  .experience-media {
+    max-width: 100%;
+  }
+}
+
+/* ========================================= */
+/* SECTION: EXPERIENCE TOUCH KORREKTUR       */
+/* ========================================= */
+@media (hover: none) and (pointer: coarse) {
+  .experience-trigger:hover,
+  .experience-trigger:active,
+  .experience-trigger[aria-expanded="true"] {
+    background:
+      var(--color-panel);
   }
 }
 
