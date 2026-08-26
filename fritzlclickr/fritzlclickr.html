@@ -1,0 +1,196 @@
+<!Doctype HTML>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="clicker, fritzlclickr, fritzlclicker, fritzl, game, spiel, gelegenheitsspiel, Ilmenau, TU, technische, Universität, Uni, bill, wumsen, bill_wumsen">
+  <meta name="description" content="clicker game fritzlclickr">
+  <meta name="author" content="Fritz Leonard Pittner">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css"> <!--Bootstrap Library-->
+  <link rel="stylesheet" type="text/css" href="fcss.css">
+  <script src="fcscript.js"></script>
+  <title> fritzlclickr - der beste Clicker Ilmenaus! Made by Fritz Leonard Pittner</title>
+  <link rel="icon" type="image/x-icon" href="img/favicon.ico"> <!--Icon für Einstellungen/Barrierefreiheit-->
+</head>
+<body onload="checksettings()"> 
+  <!--Header-->
+  <div class="fheader">
+    <h1 style="font-weight: bolder; color: rgba(38,38,38,1);">Willkommen bei fritzlclickr</h1>
+    <p style="color: rgba(38,38,38,1);">-dem besten Clicker Ilmenaus!</p>
+  </div>
+
+  <!--Navigationsleiste-->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
+    <div class="row container">
+      <div class="navi col-12"> <a href="img/tutorial.png" target="_blank">So funktionierts!</a> </div>
+    </div>
+  </nav>
+
+  <!--Seiteninhalt-->
+  <div class="row"><span id="nachricht" style="text-align: center; margin-top: 1vh; font-style: oblique; color: rgba(38,38,38,1);">Möge die Produktion beginnen!</span></div>
+
+  <div class="container" style="margin-top: 1vh;">
+    <div class="row">
+
+  <!--fritzl-Anzeige(/pro Sekunde)/Bild-->
+      <div class="col-lg-6 border1 imgdiv" style="background-color: tomato;">
+        <strong style="color: rgba(38,38,38,1);">fritzls:</strong> 
+        <span id="fa" style="color: moccasin;">0</span> <br>
+        <strong style="color: rgba(38,38,38,1);">fritzls pro Sekunde:</strong> 
+        <span id="fpsa" style="color: moccasin;">0</span>
+        <div style="max-width: 100%; max-height: 100%; text-align: center;"> 
+         <a onmousedown="add()" onmouseup="revert()"> <img id="img1" style="display: block; margin-left: auto; margin-right: auto; margin-top: auto;" src="img/fritzl.png" alt="¯\_(ツ)_/¯" draggable="false"></a>
+        </div>
+      </div>
+
+  <!--Rechte Spalte-->
+      <div class="col-lg-6 border1" style="background-color: rgba(38,38,38,1); color: moccasin;">
+        <div class="row" style="text-align: center;">
+          <div id="foodtab" onclick="foodtab()" class="col-lg-6 hover" style="font-size: 28pt; color: moccasin; background-color: rgba(38,38,38,1); border-right-style:solid;">Food</div>
+          <div onclick="upgradetab()" class="col-lg-6 hover" style="font-size: 28pt; color: moccasin; background-color: rgba(38,38,38,1);">Upgrades</div>
+        </div>
+
+  <!--Essen-->
+        <div id="food">
+          <div class="border2 row hover" style="background-color: brown;" onclick="fu1()">
+            <div class="col-lg-12" style="text-align: center;"><span id="anzahl1">0</span>&nbsp;<span id="bier1">Jäcklein</span></div>
+            <div class="col-lg-6">Kosten: <span id="kosten1">15.0</span></div>
+            <div class="col-lg-6">fpS: <span id="fps1">0.2</span></div>
+          </div>
+
+          <div class="border2 row hover" style="background-color:darkolivegreen;" onclick="fu2()">  
+            <div class="col-lg-12" style="text-align: center;"><span id="anzahl2">0</span>&nbsp;Bockwürste</div>
+            <div class="col-lg-6">Kosten: <span id="kosten2">100.0</span></div>
+            <div class="col-lg-6">fpS: <span id="fps2">1</span> </div>
+          </div>
+
+          <div class="border2 row hover" style="background-color:midnightblue;" onclick="fu3()">
+            <div class="col-lg-12" style="text-align: center;"><span id="anzahl3">0</span>&nbsp;MCs</div>
+            <div class="col-lg-6">Kosten: <span id="kosten3">600.0</span></div>
+            <div class="col-lg-6">fpS: <span id="fps3">8</span> </div>
+          </div>
+
+          <div class="border2 row hover" style="background-color:darkslategray;"  onclick="fu4()">
+            <div class="col-lg-12" style="text-align: center;"><span id="anzahl4">0</span>&nbsp;Chilis</div>
+            <div class="col-lg-6">Kosten: <span id="kosten4">2500.0</span></div>
+            <div class="col-lg-6">fpS: <span id="fps4">32</span> </div>
+          </div>
+
+          <div class="border2 row hover" style="background-color:orangered;" onclick="fu5()">
+            <div class="col-lg-12" style="text-align: center;"><span id="anzahl5">0</span>&nbsp;Mensa Ehrenberg</div>
+            <div class="col-lg-6">Kosten: <span id="kosten5">15000.0</span></div>
+            <div class="col-lg-6">fpS: <span id="fps5">111</span> </div>
+          </div>
+
+          <div class="border2 row hover" style="background-color:black;" onclick="fu6()">
+            <div class="col-lg-12" style="text-align: center;"><span id="anzahl6">0</span>&nbsp;Kapadokya</div>
+            <div class="col-lg-6">Kosten: <span id="kosten6">75000.0</span></div>
+            <div class="col-lg-6">fpS: <span id="fps6">420</span> </div>
+          </div>
+        </div>
+
+  <!--Upgrades-->
+        <div id="upgrades" style="display: none;">
+          <div class="row">
+            <div class="col-lg-4 tout hide">Verbesserung</div>
+            <div class="col-lg-8 tin hide">Beschreibung</div>
+          </div>
+
+          <div onclick="upgrade1()" class="row hover">
+            <div class="col-lg-4 tout">Extrafinger (<span id="uanzahl1">0</span>)</div>
+            <div class="col-lg-8 tin">Verdopple deine Mausklicks! Kosten: <span id="ukosten1">100</span></div>
+          </div>
+
+          <div onclick="upgrade2()" class="row hover">
+            <div class="col-lg-4 tout">Feinste Braukunst (<span id="uanzahl2">0</span>)</div>
+            <div class="col-lg-8 tin">Dein <span id="bier3" style="color:rgba(38,38,38,1); font-size: 15pt;">Jäcklein</span> produziert jetzt <span id="ubeschreibung1" style="color: rgba(38,38,38,1);">0,3</span> fpS! Deine Mausklicks produzieren <span id="ubeschreibung2" style="color: rgba(38,38,38,1);">1</span> % mehr pro <span id="bier2" style="color:rgba(38,38,38,1); font-size: 15pt;">Jäcklein</span>! Kosten: <span id="ukosten2">100</span></div>
+          </div>
+
+          <div onclick="upgrade3()" class="row hover">
+            <div class="col-lg-4 tout">Pro-Bockwurst (<span id="uanzahl3">0</span>)</div>
+            <div class="col-lg-8 tin">Verdopple deine Bockwurst-fpS! Kosten: <span id="ukosten3">2000</span></div>
+          </div>
+
+          <div onclick="upgrade4()" class="row hover">
+            <div class="col-lg-4 tout">MC-Menü (<span id="uanzahl4">0</span>)</div>
+            <div class="col-lg-8 tin">Verbessere pro MCs deine Gesamtpassivproduktion von fritzls um <span id="ubeschreibung3" style="color: rgba(38,38,38,1);">1</span> %! Kosten: <span id="ukosten4">2500</span></div>
+          </div>
+
+          <div onclick="upgrade5()" class="row hover">
+            <div class="col-lg-4 tout">Scharf! (<span id="uanzahl5">0</span>)</div>
+            <div class="col-lg-8 tin">Für jede Chili kriegst du <span id="ubeschreibung4" style="color: rgba(38,38,38,1);">10</span> fritzls mehr pro Klick! Kosten <span id="ukosten5">10000</span></div>
+          </div>
+
+          <div id="upgrade6hide" onclick="upgrade6()" class="row hover">
+            <div class="col-lg-4 tout">Reinheitsgebot</div>
+            <div class="col-lg-8 tin">Deine Jäcklein sind jetzt Sternburg! Sternburg fpS-Produktion x10 (nur einmal kaufbar)! Kosten: <span id="ukosten6">100000</span></div>
+          </div>
+
+          <div onclick="upgrade7()" class="row hover">
+            <div class="col-lg-4 tout">Studentenrabatt (<span id="uanzahl7">0</span>)</div>
+            <div class="col-lg-8 tin">Mensa fpS-Produktion +<span id="ubeschreibung5" style="color: rgba(38,38,38,1);">111</span>! Kosten: <span id="ukosten7">75000</span></div>
+          </div>
+
+          <div onclick="upgrade8()" class="row hover">
+            <div class="col-lg-4 tout">Döner deines Vertrauens (<span id="uanzahl8">0</span>)</div>
+            <div class="col-lg-8 tin">Für jeden Kapadokya erhältst du <span id="ubeschreibung6" style="color: rgba(38,38,38,1);">20</span> Jäcklein! Kosten: <span id="ukosten8">500000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!--Speichern/Laden/Einstellungen-->
+    <div class="row">
+      <div class="col-lg-4 border1 hover" style="background-color: rgba(38,38,38,1); text-align:center; color: moccasin;" onclick="speichern()">
+        <strong>Fortschritt speichern</strong>
+      </div>
+      <div class="col-lg-4 border1 hover" style="background-color: tomato;text-align:center; color: moccasin;" onclick="laden()">
+        <strong>Fortschritt laden</strong>
+      </div>
+      <div class="col-lg-4 border1 hover" style="background-color: rgba(38,38,38,1);text-align:center; color: moccasin;" onclick="settings()">
+        <strong>Einstellungen<img src="img/emoji.png" alt="¯\_(ツ)_/¯" draggable="false"></strong>
+      </div>
+    </div>
+
+    <div id="efenster" class="border1 row" style="background-color:tomato; display: none">
+            <div class="col-lg-12" style="text-align: left;"><strong style="color: rgba(38,38,38,1); text-decoration: underline rgba(38,38,38,1);">Einstellungen:</strong></div>
+
+            <div class="col-12" style="text-align: left;"> 
+              <label for="volume">Lautstärke (0%-100%):</label> 
+              <input type="range" id="volume" name="vol" min="0" max="100" value="100" style="color: black"> 
+            </div>
+
+            <div class="col-12" style="text-align: left;"> 
+              <label for="volumetf">Sound deaktivieren?</label> 
+              <input type="checkbox" id="volumetf" name="volumetf"> 
+            </div>
+
+            <div class="col-12" style="text-align: left;"> 
+              <label for="videotf">Animation deaktivieren?</label> 
+              <input type="checkbox" id="videotf" name="videotf"> 
+            </div>
+
+            <div class="col-12" style="text-align: left;"> 
+              <label for="legasthenie" style="font-size: 25pt;">Legasthenieschriftart aktivieren?<img src="img/emoji.png" alt="¯\_(ツ)_/¯" draggable="false"></label> 
+              <input type="checkbox" id="legasthenie" name="legasthenie"> 
+            </div>
+
+            <div class="col-6 border1 hover" style="background-color: rgba(38,38,38,1); text-align:center; color: moccasin;" onclick="ssave()">Einstellungen speichern</div>
+            <div class="col-6 border1 hover" style="background-color: rgba(38,38,38,1); text-align:center; color: moccasin;" onclick="sclose()">Einstellungen nicht speichern</div>
+    </div>
+  </div>
+
+  <!--Footer-->
+  <div class="ffooter1 row justify-content-center" style="margin-top: 5vh">
+      <div class="col-lg-4 footer">
+        <a href="../index.html" style="color:moccasin; font-size: 15pt;">Zurück zum Portfolio</a>
+      </div>
+      <div class="col-lg-4 footer">
+        <a href="../impressum.html" style="color:moccasin; font-size: 15pt;">Impressum</a>
+      </div>
+      <div class="col-lg-4 footer">
+        <a href="../datenschutz.html" style="color:moccasin; font-size: 15pt;">Datenschutz</a>
+      </div>
+  </div>
+</body>
+</html>

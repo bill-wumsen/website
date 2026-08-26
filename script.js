@@ -1,3 +1,4 @@
+
 /* ========================================= */
 /* SECTION: VIDEO / TEXT DATEN               */
 /* ========================================= */
@@ -9,7 +10,7 @@ const slides = [
     left: "Regisseur",
     right: "Der Baron",
     topLeft: "Feature Film",
-    topRight: "Regie · Produktion · Schnitt",
+    topRight: "Drehbuch · Regie · Schnitt",
     bottomCenter: "ilmpressions Filmproduktion"
   },
   {
@@ -19,8 +20,8 @@ const slides = [
     left: "Content Creator",
     right: "studis.ilmenau",
     topLeft: "Social Media",
-    topRight: "Redaktion · Interviews · Memes",
-    bottomCenter: "im Auftrag der TU Ilmenau"
+    topRight: "Verticals · Redaktion · Interviews",
+    bottomCenter: "TU Ilmenau"
   },
   {
     video: "videos/web3_60_hires.mp4",
@@ -29,18 +30,18 @@ const slides = [
     left: "Produktionsleiter",
     right: "Medusa",
     topLeft: "Feature Film",
-    topRight: "Organisation · Distribution",
+    topRight: "Finanzierung · Produktion · Distribution",
     bottomCenter: "ilmpressions Filmproduktion"
   },
   {
     video: "videos/web4_hires.mp4",
     link: "https://www.insuedthueringen.de/inhalt.medusa-filmpremiere-fuer-ilmenauer-psychothriller.ed4332bd-d247-4c9c-a010-5b1cc81b1771.html",
     linkLabel: "Projekt Medusa Filmpremiere öffnen",
-    left: "Organisator",
-    right: "Medusa Filmpremiere",
-    topLeft: "Event",
+    left: "Eventmanager",
+    right: "Premiere Medusa",
+    topLeft: "Filmpremiere",
     topRight: "Finanzierung · Logistik",
-    bottomCenter: "für FeM e.V."
+    bottomCenter: "FeM e.V."
   }
 ];
 
@@ -155,6 +156,11 @@ const reducedMotionQuery =
 const mobileLayoutQuery =
   window.matchMedia(
     "(max-width: 700px)"
+  );
+
+const responsiveLandingQuery =
+  window.matchMedia(
+    "(max-width: 1100px)"
   );
 
 const coarsePointerQuery =
@@ -273,6 +279,11 @@ let landingWordMeasureElement = null;
 /* SECTION: RESPONSIVE LANDING STATUS        */
 /* ========================================= */
 let responsiveLandingSyncFrame = null;
+let responsiveMarkerLayoutFrame = null;
+let responsiveMarkerSyncFrame = null;
+let responsiveMarkerObserver = null;
+let responsiveMarkerLayer = null;
+let responsiveScrollMarkers = [];
 
 /* ========================================= */
 /* SECTION: VIDEO LAYER INITIALISIERUNG      */
@@ -1187,6 +1198,21 @@ function updateVideoLink(index) {
     videoLink.removeAttribute(
       "aria-label"
     );
+    videoLink.removeAttribute(
+      "target"
+    );
+    videoLink.removeAttribute(
+      "rel"
+    );
+
+    videoLink.classList.add(
+      "is-disabled"
+    );
+
+    videoLink.setAttribute(
+      "aria-disabled",
+      "true"
+    );
 
     return;
   }
@@ -1197,6 +1223,24 @@ function updateVideoLink(index) {
     "aria-label",
     slide.linkLabel ||
       `${slide.left} ${slide.right} öffnen`
+  );
+
+  videoLink.setAttribute(
+    "target",
+    "_blank"
+  );
+
+  videoLink.setAttribute(
+    "rel",
+    "noopener noreferrer"
+  );
+
+  videoLink.classList.remove(
+    "is-disabled"
+  );
+
+  videoLink.removeAttribute(
+    "aria-disabled"
   );
 }
 
@@ -2130,13 +2174,405 @@ async function prepareIncomingVideo(
 /* SECTION: RESPONSIVE LANDING MODUS         */
 /* ========================================= */
 function usesNativeLandingScroll() {
+  const hasTouchInput =
+    coarsePointerQuery.matches ||
+    navigator.maxTouchPoints > 0;
+
   return Boolean(
     mobileLayoutQuery.matches ||
     (
-      window.innerWidth <= 1100 &&
-      coarsePointerQuery.matches
+      responsiveLandingQuery.matches &&
+      hasTouchInput
     )
   );
+}
+
+/* ========================================= */
+/* SECTION: RESPONSIVE SCROLL MARKER         */
+/* ========================================= */
+function getResponsiveViewportHeight() {
+  return Math.max(
+    window.innerHeight ||
+      document.documentElement.clientHeight ||
+      1,
+    1
+  );
+}
+
+function getResponsiveMarkerIndexFallback() {
+  const metrics =
+    getLandingScrollMetrics();
+
+  if (!metrics) {
+    return currentSlideIndex;
+  }
+
+  if (window.scrollY <= metrics.top) {
+    return 0;
+  }
+
+  if (window.scrollY >= metrics.exit) {
+    return slides.length - 1;
+  }
+
+  const progress =
+    metrics.maxScrollable > 0
+      ? Math.min(
+          Math.max(
+            (
+              window.scrollY -
+              metrics.top
+            ) /
+              metrics.maxScrollable,
+            0
+          ),
+          1
+        )
+      : 0;
+
+  return Math.min(
+    Math.floor(
+      progress * slides.length
+    ),
+    slides.length - 1
+  );
+}
+
+function getResponsiveMarkerIndex() {
+  if (
+    responsiveScrollMarkers.length === 0
+  ) {
+    return getResponsiveMarkerIndexFallback();
+  }
+
+  const viewportCenter =
+    getResponsiveViewportHeight() / 2;
+
+  for (
+    let index = 0;
+    index < responsiveScrollMarkers.length;
+    index += 1
+  ) {
+    const marker =
+      responsiveScrollMarkers[index];
+
+    const rect =
+      marker.getBoundingClientRect();
+
+    if (
+      rect.top <= viewportCenter &&
+      rect.bottom > viewportCenter
+    ) {
+      return Number.parseInt(
+        marker.dataset.slideIndex,
+        10
+      );
+    }
+  }
+
+  return getResponsiveMarkerIndexFallback();
+}
+
+function syncResponsiveLandingFromMarkers() {
+  if (
+    !usesNativeLandingScroll() ||
+    !landing ||
+    isPageCurtainInteractionBlocked()
+  ) {
+    return;
+  }
+
+  const nextIndex =
+    getResponsiveMarkerIndex();
+
+  if (
+    nextIndex === currentSlideIndex &&
+    !isLandingTransitioning
+  ) {
+    return;
+  }
+
+  /*
+   * SECTION: Responsive Geräte wechseln den
+   * sichtbaren Zustand direkt. Dadurch gibt
+   * es keine Animationssperre, die gegen das
+   * native Momentum-Scrolling arbeiten kann.
+   */
+  setLandingStateImmediately(
+    nextIndex
+  );
+}
+
+function scheduleResponsiveMarkerSync() {
+  if (
+    !usesNativeLandingScroll() ||
+    responsiveMarkerSyncFrame !== null
+  ) {
+    return;
+  }
+
+  responsiveMarkerSyncFrame =
+    window.requestAnimationFrame(() => {
+      responsiveMarkerSyncFrame = null;
+      syncResponsiveLandingFromMarkers();
+    });
+}
+
+function disconnectResponsiveMarkerObserver() {
+  if (responsiveMarkerObserver) {
+    responsiveMarkerObserver.disconnect();
+    responsiveMarkerObserver = null;
+  }
+}
+
+function createResponsiveMarkerObserver() {
+  disconnectResponsiveMarkerObserver();
+
+  if (
+    !usesNativeLandingScroll() ||
+    responsiveScrollMarkers.length === 0 ||
+    !("IntersectionObserver" in window)
+  ) {
+    return;
+  }
+
+  const viewportHeight =
+    getResponsiveViewportHeight();
+
+  const observerBandHeight =
+    Math.min(4, viewportHeight);
+
+  const observerBandTop =
+    Math.max(
+      Math.floor(
+        (
+          viewportHeight -
+          observerBandHeight
+        ) /
+          2
+      ),
+      0
+    );
+
+  const observerBandBottom =
+    Math.max(
+      viewportHeight -
+        observerBandTop -
+        observerBandHeight,
+      0
+    );
+
+  responsiveMarkerObserver =
+    new IntersectionObserver(
+      (entries) => {
+        if (
+          !usesNativeLandingScroll() ||
+          !entries.some(
+            (entry) =>
+              entry.isIntersecting
+          )
+        ) {
+          return;
+        }
+
+        scheduleResponsiveMarkerSync();
+      },
+      {
+        root: null,
+        rootMargin:
+          `-${observerBandTop}px 0px ` +
+          `-${observerBandBottom}px 0px`,
+        threshold: 0
+      }
+    );
+
+  responsiveScrollMarkers.forEach(
+    (marker) => {
+      responsiveMarkerObserver.observe(
+        marker
+      );
+    }
+  );
+}
+
+function layoutResponsiveScrollMarkers() {
+  if (
+    !usesNativeLandingScroll() ||
+    !landing ||
+    responsiveScrollMarkers.length !==
+      slides.length
+  ) {
+    return;
+  }
+
+  const viewportHeight =
+    getResponsiveViewportHeight();
+
+  const maxScrollable =
+    Math.max(
+      landing.offsetHeight -
+        viewportHeight,
+      1
+    );
+
+  const markerHeight =
+    maxScrollable /
+    Math.max(slides.length, 1);
+
+  const centerOffset =
+    viewportHeight / 2;
+
+  responsiveScrollMarkers.forEach(
+    (marker, index) => {
+      const markerTop =
+        centerOffset +
+        markerHeight * index;
+
+      const isLastMarker =
+        index === slides.length - 1;
+
+      marker.style.top =
+        `${Math.max(markerTop - 1, 0)}px`;
+
+      marker.style.height =
+        `${Math.max(
+          markerHeight +
+            (isLastMarker ? 2 : 1),
+          2
+        )}px`;
+    }
+  );
+
+  createResponsiveMarkerObserver();
+  scheduleResponsiveMarkerSync();
+}
+
+function scheduleResponsiveMarkerLayout() {
+  if (
+    !usesNativeLandingScroll() ||
+    responsiveMarkerLayoutFrame !== null
+  ) {
+    return;
+  }
+
+  responsiveMarkerLayoutFrame =
+    window.requestAnimationFrame(() => {
+      responsiveMarkerLayoutFrame = null;
+      layoutResponsiveScrollMarkers();
+    });
+}
+
+function createResponsiveScrollMarkers() {
+  if (
+    !usesNativeLandingScroll() ||
+    !landing
+  ) {
+    return;
+  }
+
+  if (responsiveMarkerLayer) {
+    scheduleResponsiveMarkerLayout();
+    return;
+  }
+
+  const markerLayer =
+    document.createElement("div");
+
+  markerLayer.className =
+    "responsive-landing-scroll-markers";
+
+  markerLayer.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  Object.assign(
+    markerLayer.style,
+    {
+      position: "absolute",
+      inset: "0",
+      width: "1px",
+      height: "100%",
+      overflow: "visible",
+      opacity: "0",
+      pointerEvents: "none",
+      userSelect: "none"
+    }
+  );
+
+  const fragment =
+    document.createDocumentFragment();
+
+  responsiveScrollMarkers =
+    slides.map((slide, index) => {
+      const marker =
+        document.createElement("span");
+
+      marker.dataset.slideIndex =
+        String(index);
+
+      marker.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      Object.assign(
+        marker.style,
+        {
+          position: "absolute",
+          left: "0",
+          width: "1px",
+          minHeight: "2px",
+          display: "block",
+          pointerEvents: "none"
+        }
+      );
+
+      /*
+       * SECTION: slide wird bewusst nur zur
+       * Anzahlsermittlung verwendet. Inhalt
+       * und Desktop-Daten bleiben unverändert.
+       */
+      void slide;
+
+      fragment.appendChild(marker);
+      return marker;
+    });
+
+  markerLayer.appendChild(fragment);
+  landing.appendChild(markerLayer);
+
+  responsiveMarkerLayer =
+    markerLayer;
+
+  layoutResponsiveScrollMarkers();
+}
+
+function destroyResponsiveScrollMarkers() {
+  disconnectResponsiveMarkerObserver();
+
+  if (responsiveMarkerLayoutFrame !== null) {
+    window.cancelAnimationFrame(
+      responsiveMarkerLayoutFrame
+    );
+
+    responsiveMarkerLayoutFrame = null;
+  }
+
+  if (responsiveMarkerSyncFrame !== null) {
+    window.cancelAnimationFrame(
+      responsiveMarkerSyncFrame
+    );
+
+    responsiveMarkerSyncFrame = null;
+  }
+
+  if (responsiveMarkerLayer) {
+    responsiveMarkerLayer.remove();
+  }
+
+  responsiveMarkerLayer = null;
+  responsiveScrollMarkers = [];
 }
 
 /* ========================================= */
@@ -2314,6 +2750,7 @@ function snapLandingScrollTo(
   targetPosition
 ) {
   if (
+    usesNativeLandingScroll() ||
     !Number.isFinite(
       targetPosition
     )
@@ -3549,10 +3986,10 @@ function handleLandingScroll(
 
   /*
    * SECTION: Auf Smartphones und
-   * Touch-Tablets bestimmt ausschließlich
-   * der reale Scrollfortschritt den aktiven
-   * Videozustand. Es gibt kein Scroll-Lock,
-   * kein preventDefault und kein Zurücksnappen.
+   * Touch-Tablets wird der Videozustand
+   * ausschließlich von vier unsichtbaren
+   * Scroll-Markern beobachtet. Das native
+   * Scrollen selbst wird nie manipuliert.
    */
   if (usesNativeLandingScroll()) {
     wasBelowLanding =
@@ -3560,14 +3997,7 @@ function handleLandingScroll(
         maxScrollableInsideLanding +
           1;
 
-    if (
-      nextIndex !== currentSlideIndex ||
-      isLandingTransitioning
-    ) {
-      setLandingStateImmediately(
-        nextIndex
-      );
-    }
+    scheduleResponsiveMarkerSync();
 
     updateLandingLineVisibility(
       rect
@@ -3776,6 +4206,13 @@ function synchronizeResponsiveLandingMode() {
     !usesNativeLandingScroll() &&
     isLandingScrollControlled();
 
+  if (usesNativeLandingScroll()) {
+    createResponsiveScrollMarkers();
+    scheduleResponsiveMarkerLayout();
+  } else {
+    destroyResponsiveScrollMarkers();
+  }
+
   scheduleLandingWordFit();
   handleLandingScroll();
 }
@@ -3797,6 +4234,7 @@ function scheduleResponsiveLandingSync() {
 function observeResponsiveLandingMode() {
   const queries = [
     mobileLayoutQuery,
+    responsiveLandingQuery,
     coarsePointerQuery
   ];
 
@@ -3824,6 +4262,7 @@ updateLineStartOffsets(true);
 initializeLandingWordFit();
 initializePageCurtain();
 observeResponsiveLandingMode();
+synchronizeResponsiveLandingMode();
 
 /* ========================================= */
 /* SECTION: EVENTS                           */
@@ -3919,8 +4358,10 @@ window.addEventListener(
       );
     }
 
-    if (
-      !usesNativeLandingScroll() &&
+    if (usesNativeLandingScroll()) {
+      createResponsiveScrollMarkers();
+      scheduleResponsiveMarkerLayout();
+    } else if (
       isLandingScrollControlled()
     ) {
       snapLandingScrollToSlide(
@@ -3957,10 +4398,17 @@ window.addEventListener(
           metrics.exit
       );
 
+    if (usesNativeLandingScroll()) {
+      createResponsiveScrollMarkers();
+      scheduleResponsiveMarkerLayout();
+    }
+
     handleLandingScroll();
 
     window.setTimeout(() => {
-      window.scrollTo(0, 0);
+      if (!usesNativeLandingScroll()) {
+        window.scrollTo(0, 0);
+      }
 
       lastNumberWindowScrollY =
         window.scrollY;
@@ -3968,6 +4416,10 @@ window.addEventListener(
       numberMotionUsesVirtualInput =
         !usesNativeLandingScroll() &&
         isLandingScrollControlled();
+
+      if (usesNativeLandingScroll()) {
+        scheduleResponsiveMarkerLayout();
+      }
 
       handleLandingScroll();
     }, 1);
@@ -3977,7 +4429,9 @@ window.addEventListener(
 window.addEventListener(
   "pageshow",
   () => {
-    window.scrollTo(0, 0);
+    if (!usesNativeLandingScroll()) {
+      window.scrollTo(0, 0);
+    }
 
     isScrollGestureLocked = false;
     isScrollGestureIdle = true;
@@ -3986,7 +4440,14 @@ window.addEventListener(
     clearScrollGestureIdleTimer();
     resetLandingScrollAccumulators();
 
-    setLandingStateImmediately(0);
+    if (usesNativeLandingScroll()) {
+      createResponsiveScrollMarkers();
+      scheduleResponsiveMarkerLayout();
+      scheduleResponsiveMarkerSync();
+    } else {
+      setLandingStateImmediately(0);
+    }
+
     updateLineStartOffsets(true);
     handleLandingScroll();
   }
@@ -4044,6 +4505,12 @@ document.addEventListener(
       numberMotionUsesVirtualInput =
         !usesNativeLandingScroll() &&
         isLandingScrollControlled();
+
+      if (usesNativeLandingScroll()) {
+        createResponsiveScrollMarkers();
+        scheduleResponsiveMarkerLayout();
+        scheduleResponsiveMarkerSync();
+      }
 
       activateVideoGlow(true);
     } else {

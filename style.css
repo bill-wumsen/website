@@ -24,7 +24,7 @@
     cubic-bezier(0.55, 0.055, 0.675, 0.19);
 
   /* ========================================= */
-  /* SECTION: Projekte & Erfahrung Variablen     */
+  /* SECTION: Projekte Variablen              */
   /* ========================================= */
   --experience-font-display: Arial, Helvetica, sans-serif;
   --experience-font-body: Arial, Helvetica, sans-serif;
@@ -36,13 +36,13 @@
   --experience-duration-open: 504ms;
   --experience-duration-close: 260ms;
   --experience-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
   /* ========================================= */
-  /* SECTION: FOOTER VARIABLEN                */
+  /* SECTION: FOOTER VARIABLEN                 */
   /* ========================================= */
   --footer-wave-height: 2.5rem;
   --footer-wave-count: 11;
   --footer-content-width: 1280px;
-
 }
 
 * {
@@ -428,12 +428,14 @@ body::-webkit-scrollbar {
 
 .landing-topbar-link {
   color: var(--color-highlight);
+
   font-family:
     var(--experience-font-body);
   font-size:
     clamp(0.93rem, 1.35vw, 1.35rem);
   font-weight: 400;
   letter-spacing: 0.02em;
+
   justify-self: auto;
 }
 
@@ -455,7 +457,6 @@ body::-webkit-scrollbar {
 .landing-topbar-name:hover,
 .landing-topbar-link:hover {
   opacity: 0.72;
-
   transform: translateY(-2px);
 }
 
@@ -464,7 +465,6 @@ body::-webkit-scrollbar {
 .landing-topbar-name:focus-visible::after,
 .landing-topbar-link:focus-visible::after {
   opacity: 1;
-
   transform: scaleX(1);
 }
 
@@ -504,9 +504,11 @@ body::-webkit-scrollbar {
       );
     letter-spacing: 0.01em;
   }
+
   .landing-topbar-link {
-  right: clamp(5.6rem, 18vw, 8.2rem);
-}
+    right: clamp(5.6rem, 18vw, 8.2rem);
+  }
+
   .landing-topbar-name,
   .landing-topbar-timecode,
   .landing-topbar-link {
@@ -538,9 +540,10 @@ body::-webkit-scrollbar {
       clamp(0.54rem, 2.25vw, 0.87rem);
     letter-spacing: 0;
   }
+
   .landing-topbar-link {
-  right: clamp(4.9rem, 19vw, 6.8rem);
-}
+    right: clamp(4.9rem, 19vw, 6.8rem);
+  }
 
   .landing-topbar-name,
   .landing-topbar-link {
@@ -736,6 +739,7 @@ body::-webkit-scrollbar {
 
   background: #1f1d20;
 }
+
 /* ========================================= */
 /* SECTION: VIDEO PROJECT LINK               */
 /* ========================================= */
@@ -754,6 +758,7 @@ body::-webkit-scrollbar {
 
 .portfolio-video-link.is-disabled {
   pointer-events: none;
+  cursor: default;
 }
 
 /* ========================================= */
@@ -779,7 +784,6 @@ body::-webkit-scrollbar {
 
 .portfolio-video.is-active {
   z-index: 1;
-
   visibility: visible;
 }
 
@@ -1117,7 +1121,7 @@ html.js
 /* ========================================= */
 @media (min-width: 701px) and (max-width: 1100px) {
   :root {
-    --video-width: min(56vw, 640px);
+    --video-width: min(61.6vw, 704px);
   }
 
   .landing {
@@ -1155,6 +1159,10 @@ html.js
   .landing-topbar-link--projects {
     right:
       clamp(7rem, 15vw, 10rem);
+  }
+
+  .landing-topbar-link--contact {
+    right: auto;
   }
 
   .video-stage {
@@ -1234,7 +1242,13 @@ html.js
   }
 
   .landing-topbar-link--contact {
+    position: relative;
+    top: 0;
+    right: auto;
+
     grid-column: 3;
+    justify-self: end;
+    align-self: start;
 
     font-size:
       clamp(0.68rem, 2.8vw, 0.9rem);
@@ -1269,18 +1283,9 @@ html.js
     touch-action: manipulation;
   }
 
-  .overlay-left {
-    right: auto;
-    left: 0.75rem;
-
-    text-align: left;
-  }
-
+  .overlay-left,
   .overlay-right {
-    right: 0.75rem;
-    left: auto;
-
-    text-align: right;
+    display: none;
   }
 
   .overlay-top-left {
@@ -1302,7 +1307,7 @@ html.js
 }
 
 /* ========================================= */
-/* SECTION: PROJEKTE & ERFAHRUNG             */
+/* SECTION: PROJEKTE                         */
 /* ========================================= */
 .experience-section {
   position: relative;
@@ -1692,18 +1697,21 @@ html.js
 .experience-project-layout {
   display: grid;
   grid-template-columns:
-    minmax(0, 3fr)
-    minmax(280px, 2fr);
-  align-items: start;
+    minmax(0, 18fr)
+    minmax(196px, 7fr);
+
+  align-items: center;
+
   gap: clamp(2.5rem, 5vw, 4rem);
 
   padding:
-    clamp(2.75rem, 5vw, 4.5rem)
+    clamp(1.375rem, 2.5vw, 2.25rem)
     clamp(1.5rem, 3vw, 3rem);
 
   background: var(--color-bg);
   color: var(--color-text);
 }
+
 .experience-project-layout--no-image {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -1713,8 +1721,31 @@ html.js
   max-width: 900px;
 }
 
+.experience-project-layout--reverse {
+  grid-template-columns:
+    minmax(196px, 7fr)
+    minmax(0, 18fr);
+}
+
+.experience-project-layout--reverse
+.experience-project-copy {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.experience-project-layout--reverse
+.experience-media {
+  grid-column: 1;
+  grid-row: 1;
+
+  justify-self: start;
+
+  transform-origin: left center;
+}
+
 .experience-project-copy {
   max-width: 740px;
+  align-self: center;
 }
 
 .experience-description {
@@ -1784,8 +1815,14 @@ html.js
   margin: 0;
 
   overflow: hidden;
-  justify-self: center;
+
+  justify-self: end;
+  align-self: center;
+
+  transform: scale(1.15);
+  transform-origin: right center;
 }
+
 .experience-image--zoom {
   transform: scale(1.1);
 }
@@ -1913,7 +1950,6 @@ html.js
 
 .experience-cv-link:hover {
   gap: 1rem;
-
   border-color: var(--color-text);
 }
 
@@ -1955,11 +1991,11 @@ html.js
 /* ========================================= */
 @media (max-width: 768px) {
   .experience-container {
-  padding:
-    4.8rem
-    1.25rem
-    5rem;
-}
+    padding:
+      4.8rem
+      1.25rem
+      5rem;
+  }
 
   .experience-header {
     display: block;
@@ -2165,6 +2201,12 @@ html.js
       clamp(1.25rem, 2.5vw, 2rem);
   }
 
+  .experience-project-layout--reverse {
+    grid-template-columns:
+      minmax(190px, 0.9fr)
+      minmax(0, 1.6fr);
+  }
+
   .experience-project-layout--no-image {
     grid-template-columns:
       minmax(0, 1fr);
@@ -2179,6 +2221,20 @@ html.js
   .experience-cv {
     grid-template-columns: 1fr auto;
   }
+
+  .experience-trigger,
+  .experience-number,
+  .experience-period,
+  .experience-project-name,
+  .experience-project-roles,
+  .experience-category,
+  .experience-symbol {
+    color: var(--color-text);
+  }
+
+  .experience-trigger:focus-visible {
+    outline-color: var(--color-text);
+  }
 }
 
 /* ========================================= */
@@ -2188,17 +2244,87 @@ html.js
   .experience-container {
     padding:
       4.8rem
-      1.25rem
+      0
       5rem;
   }
 
+  .experience-header {
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .experience-accordion {
+    width: 100%;
+  }
+
   .experience-trigger {
+    padding:
+      1.25rem
+      1.25rem;
+
     background:
       var(--color-panel);
+    color: var(--color-text);
+  }
+
+  .experience-number,
+  .experience-period,
+  .experience-project-name,
+  .experience-project-roles,
+  .experience-category,
+  .experience-symbol {
+    color: var(--color-text);
+  }
+
+  .experience-trigger:focus-visible {
+    outline-color: var(--color-text);
+  }
+
+  .experience-project-layout,
+  .experience-tools-layout {
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
   }
 
   .experience-media {
-    max-width: 100%;
+    display: none;
+  }
+}
+
+/* ========================================= */
+/* SECTION: EXPERIENCE DESKTOP FINAL OVERRIDE */
+/* ========================================= */
+@media (min-width: 1101px) {
+  .experience-project-layout {
+    grid-template-columns:
+      minmax(0, 18fr)
+      minmax(196px, 7fr);
+
+    align-items: center;
+
+    padding:
+      clamp(1.375rem, 2.5vw, 2.25rem)
+      clamp(1.5rem, 3vw, 3rem);
+  }
+
+  .experience-project-layout--reverse {
+    grid-template-columns:
+      minmax(196px, 7fr)
+      minmax(0, 18fr);
+  }
+
+  .experience-project-copy {
+    align-self: center;
+  }
+
+  .experience-media {
+    width: 80%;
+
+    justify-self: end;
+    align-self: center;
+
+    transform: scale(1.15);
+    transform-origin: right center;
   }
 }
 
@@ -2250,6 +2376,7 @@ html.js
       var(--color-panel) var(--footer-wave-height),
       var(--color-panel) 100%
     );
+
   color: var(--color-panel-text);
 }
 
@@ -2317,10 +2444,12 @@ html.js
 .footer-primary {
   display: grid;
   grid-template-columns:
-    minmax(15rem, 1.25fr)
-    minmax(16rem, auto)
-    minmax(10rem, 0.75fr);
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
   align-items: center;
+
   gap: clamp(1.5rem, 4vw, 4rem);
 }
 
@@ -2459,7 +2588,7 @@ html.js
 /* ========================================= */
 /* SECTION: FOOTER TABLET                    */
 /* ========================================= */
-@media (max-width: 1024px) {
+@media (min-width: 701px) and (max-width: 1100px) {
   .footer-inner {
     padding-right: 2rem;
     padding-left: 2rem;
@@ -2512,11 +2641,14 @@ html.js
       "identity"
       "contact"
       "top";
+
     gap: 0.65rem;
   }
 
   .footer-contact {
+    justify-content: flex-start;
     flex-wrap: wrap;
+
     gap: 0 1.5rem;
   }
 
@@ -2526,6 +2658,7 @@ html.js
 
   .footer-secondary {
     grid-template-columns: 1fr;
+
     gap: 0.25rem;
 
     margin-top: 0.8rem;
@@ -2535,6 +2668,7 @@ html.js
   .footer-legal {
     justify-content: flex-start;
     flex-wrap: wrap;
+
     gap: 0 1.25rem;
   }
 }
@@ -2596,6 +2730,7 @@ html.js
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 2rem;
 
   margin: 0 auto;
@@ -2660,6 +2795,7 @@ html.js
 .privacy-footer-link:hover,
 .privacy-inline-link:hover {
   opacity: 0.68;
+
   text-decoration-color: currentColor;
 }
 
@@ -2691,6 +2827,7 @@ html.js
 .legal-page-navigation {
   display: flex;
   align-items: center;
+
   gap: clamp(1rem, 2.5vw, 2.5rem);
 }
 
@@ -2727,6 +2864,7 @@ html.js
   grid-template-columns:
     minmax(8rem, 0.35fr)
     minmax(0, 1fr);
+
   column-gap: clamp(2rem, 6vw, 6rem);
 
   margin-bottom: clamp(4rem, 7vw, 7rem);
@@ -2804,6 +2942,7 @@ html.js
   grid-template-columns:
     minmax(8rem, 0.35fr)
     minmax(0, 1fr);
+
   column-gap: clamp(2rem, 6vw, 6rem);
 
   border-top:
@@ -2912,6 +3051,7 @@ html.js
 
 .legal-list {
   display: grid;
+
   gap: 0.55rem;
 
   padding: 0;
@@ -2950,6 +3090,7 @@ html.js
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 2rem;
 
   padding:
@@ -2969,6 +3110,7 @@ html.js
 .legal-page-footer-navigation {
   display: flex;
   align-items: center;
+
   gap: 1.5rem;
 }
 
@@ -3013,6 +3155,7 @@ html.js
   .legal-page-topbar {
     align-items: flex-start;
     flex-direction: column;
+
     gap: 0.5rem;
   }
 
@@ -3062,6 +3205,7 @@ html.js
   .legal-content-section,
   .privacy-section {
     grid-template-columns: 1fr;
+
     gap: 1rem;
 
     padding:
@@ -3081,6 +3225,7 @@ html.js
   .privacy-footer {
     align-items: flex-start;
     flex-direction: column;
+
     gap: 0.25rem;
 
     padding:
@@ -3110,4 +3255,3 @@ html.js
     transition-duration: 0.01ms !important;
   }
 }
-
